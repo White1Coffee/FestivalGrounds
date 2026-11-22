@@ -38,6 +38,7 @@ endif()
 
 add_executable(festival_grounds
     src/main.cpp
+    src/core/AssetManager.cpp
     src/world/World.cpp
     src/pathfinding/Pathfinder.cpp
     src/simulation/Simulation.cpp

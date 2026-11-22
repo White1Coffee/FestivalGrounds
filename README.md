@@ -1,6 +1,6 @@
 # Festival Grounds
 
-A small, data-driven C++20 and SDL2 festival management sandbox. It uses a custom, lightweight entity/component-style model and a hand-drawn isometric renderer made from SDL geometry, so no external game engine or art assets are required.
+A small, data-driven C++20 and SDL2 festival management sandbox. It uses a custom, lightweight entity/component-style model and a hand-drawn isometric renderer made from SDL geometry, so no external game engine or art assets are required. The game draws at a 640×400 logical resolution and scales with nearest-neighbor filtering for crisp pixel edges. Buildings and visitors use small, blocky pixel sprites drawn in code.
 
 ## Build and run
 
@@ -24,12 +24,13 @@ The scripts check for tools and report missing prerequisites. SDL2's source down
 ## Controls
 
 - **WASD / arrow keys:** scroll the camera; **Home:** recenter
+- **Mouse wheel / + / -:** zoom in and out
 - **1:** path, **2:** food stall, **3:** toilet, **4:** stage, **5:** entrance
 - **Left click:** place selected item; **right click:** remove item / path
 - **R:** rotate selected building; **Space:** pause; **N:** advance to next day
 - **Escape:** quit
 
-Start with the entrance and short path already built. Connect new paths to it, then place facilities beside paths. Visitors arrive automatically, use A* over connected path tiles, visit stages, buy food, use toilets, and leave as their needs change. The HUD shows balance, visitors, day phase, and selected tool. A daily report appears in the upper-right.
+Start on a generated 64×64 grass map with the entrance and short path already built. The default seed creates the same decorative grass variation each run. Connect new paths to the entrance, then place facilities beside paths. Visitors arrive automatically, use A* over connected path tiles, visit stages, buy food, use toilets, and leave as their needs change. The HUD shows balance, visitors, day phase, zoom, and selected tool. A daily report appears in the upper-right.
 
 ## Architecture
 
@@ -77,7 +78,7 @@ The SDL event loop handles input and rendering; simulation advances at a fixed 1
 
 ### Rendering and simulation notes
 
-World coordinates project to screen using `sx=(x-y)*tileWidth/2`, `sy=(x+y)*tileHeight/2`; inverse projection maps clicks to tiles. Tiles and buildings are drawn in diagonal painter order. Camera offset supports keyboard scrolling. SDL filled polygons, lines, and circles stand in for bright, readable hand-drawn sprites.
+World coordinates project to screen using `sx=(x-y)*tileWidth/2`, `sy=(x+y)*tileHeight/2`; inverse projection maps clicks to tiles. Tiles and buildings are drawn in diagonal painter order. Camera offset supports keyboard scrolling. SDL geometry and small blocky code-drawn sprites use a 640×400 logical canvas, nearest-neighbor scaled to the window for a pixelated look.
 
 Each visitor owns hunger, thirst, happiness, energy, and patience. A small state machine (`Entering`, `Wandering`, `GoingToStage`, `GoingToFood`, `GoingToToilet`, `Leaving`) scores nearby facilities against need thresholds, requests a connected A* route, and follows it tile by tile. Need decay, service outcomes, stage enjoyment, and exit satisfaction are independent per visitor. There are no authored visitor routes.
 

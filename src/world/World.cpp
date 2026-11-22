@@ -1,6 +1,11 @@
 #include "world/World.hpp"
+#include <random>
 namespace fg {
-World::World() {
+World::World(std::uint32_t seed) { generate(seed); }
+void World::generate(std::uint32_t seed) {
+    std::mt19937 random(seed);
+    std::uniform_int_distribution<int> variation(0,15);
+    for(auto& tile:tiles_) tile=Tile{Terrain::Grass,static_cast<std::uint8_t>(variation(random)),false,BuildingType::None};
     at(entrance_).building=BuildingType::Entrance;
     for(int x=entrance_.x-2;x<=entrance_.x+2;++x) at({x,entrance_.y+1}).path=true;
 }

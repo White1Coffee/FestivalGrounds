@@ -1,11 +1,13 @@
 #pragma once
 #include "core/Types.hpp"
 #include <array>
+#include <cstdint>
 #include <vector>
 namespace fg {
 class World {
 public:
-    World();
+    explicit World(std::uint32_t seed=0xF3571A1u);
+    void generate(std::uint32_t seed);
     bool inBounds(TilePos p) const;
     Tile& at(TilePos p); const Tile& at(TilePos p) const;
     bool place(BuildingType type, TilePos p, int rotation=0);
