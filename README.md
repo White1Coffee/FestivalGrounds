@@ -26,11 +26,11 @@ The scripts check for tools and report missing prerequisites. SDL2's source down
 - **WASD / arrow keys:** scroll the camera; **Home:** recenter
 - **Mouse wheel / + / -:** zoom in and out
 - **1:** path, **2:** food stall, **3:** toilet, **4:** stage, **5:** entrance
-- **Left click:** place selected item; **right click:** remove item / path
-- **R:** rotate selected building; **Space:** pause; **N:** advance to next day
+- **Left click:** place selected item; **B** or **right click:** remove item / path
+- **R:** rotate selected building; **Mouse wheel / + / -:** zoom; **Space:** pause; **N:** advance to next day
 - **Escape:** quit
 
-Start on a generated 64×64 grass map with the entrance and short path already built. The default seed creates the same decorative grass variation each run. Connect new paths to the entrance, then place facilities beside paths. Visitors arrive automatically, use A* over connected path tiles, visit stages, buy food, use toilets, and leave as their needs change. The HUD shows balance, visitors, day phase, zoom, and selected tool. A daily report appears in the upper-right.
+Start on a generated 64×64 grass map with the entrance and short path already built. The default seed creates the same decorative grass variation each run. Connect new paths to the entrance, then place facilities beside paths. The entrance can be moved to another empty tile beside a path. Invalid spots show a red preview; valid spots show green. Rotate buildings with **R**, and remove buildings or paths with **B** or right click. Visitors arrive automatically, use A* over connected path tiles, visit stages, buy food, use toilets, and leave as their needs change. The HUD shows balance, visitors, day phase, zoom, and selected tool. A daily report appears in the upper-right.
 
 ## Architecture
 

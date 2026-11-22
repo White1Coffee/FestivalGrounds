@@ -29,11 +29,10 @@ int main(int,char**){
     float accumulator=0;float fps=60.0f;auto previous=std::chrono::steady_clock::now();
     while(running){auto now=std::chrono::steady_clock::now();float frame=std::chrono::duration<float>(now-previous).count();previous=now;frame=std::min(frame,.25f);if(frame>0)fps=fps*.9f+(1.0f/frame)*.1f;constexpr int width=640,height=400;fg::Input::update(input,world,events,renderer,width,height,frame);
         int mx,my;Uint32 buttons=SDL_GetMouseState(&mx,&my);auto p=input.hover;fg::BuildingType type=fg::BuildingType::Path;switch(input.tool){case fg::Tool::Path:type=fg::BuildingType::Path;break;case fg::Tool::FoodStall:type=fg::BuildingType::FoodStall;break;case fg::Tool::Toilet:type=fg::BuildingType::Toilet;break;case fg::Tool::Stage:type=fg::BuildingType::Stage;break;case fg::Tool::Entrance:type=fg::BuildingType::Entrance;break;case fg::Tool::Bulldoze:break;}
-        bool valid=world.inBounds(p);if(valid){auto&t=world.at(p);if(input.tool==fg::Tool::Path)valid=!t.path&&t.building==fg::BuildingType::None&&economy.canAfford(fg::definition(type).cost);else if(input.tool==fg::Tool::Bulldoze)valid=t.path||t.building!=fg::BuildingType::None;else valid=t.building==fg::BuildingType::None&&!t.path&&economy.canAfford(fg::definition(type).cost)&&((type==fg::BuildingType::Entrance)||world.hasPathAccess(p));}
+        bool valid=world.inBounds(p);if(valid){if(input.tool==fg::Tool::Bulldoze){const auto&t=world.at(p);valid=(t.path||t.building!=fg::BuildingType::None)&&t.building!=fg::BuildingType::Entrance;}else valid=world.canPlace(type,p)&&economy.canAfford(fg::definition(type).cost);}
         static Uint32 prevButtons=0;bool pressed=(buttons&SDL_BUTTON(SDL_BUTTON_LEFT))&&!(prevButtons&SDL_BUTTON(SDL_BUTTON_LEFT));bool right=(buttons&SDL_BUTTON(SDL_BUTTON_RIGHT))&&!(prevButtons&SDL_BUTTON(SDL_BUTTON_RIGHT));prevButtons=buttons;
-        if(pressed&&valid){if(input.tool==fg::Tool::Bulldoze)world.remove(p);else if(type==fg::BuildingType::Path){if(economy.spend(5))world.at(p).path=true;}else if(type!=fg::BuildingType::Entrance&&economy.spend(fg::definition(type).cost))world.place(type,p);}
-        if(right&&world.inBounds(p))world.remove(p);
-        if(input.rotate){input.rotate=false;}
+        if(pressed&&valid){if(input.tool==fg::Tool::Bulldoze)world.remove(p);else if(economy.spend(fg::definition(type).cost))world.place(type,p,input.rotation);}
+        if(right&&world.inBounds(p)&&world.at(p).building!=fg::BuildingType::Entrance)world.remove(p);
         accumulator+=frame;while(accumulator>=fg::kFixedStep){simulation.update(fg::kFixedStep);accumulator-=fg::kFixedStep;}
         fg::Renderer view(renderer,width,height,input.zoom);view.draw(world,simulation,economy,input.tool,p,valid,input.cameraX,input.cameraY,fps);SDL_RenderPresent(renderer);
     }

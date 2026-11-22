@@ -15,6 +15,6 @@ private:
     SDL_Point iso(TilePos,int,int)const;
     void text(int x,int y,const char* value,SDL_Color color);
     void diamond(TilePos,int,int,SDL_Color);
-    void building(TilePos,BuildingType,int,int);
+    void building(TilePos,BuildingType,int rotation,int,int);
 };
 }

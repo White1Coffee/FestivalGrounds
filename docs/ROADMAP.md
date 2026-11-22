@@ -61,23 +61,25 @@ Speler kan objecten plaatsen.
 
 ## Gebouwen
 
-- Pad
-- Gras
-- Entree
+- [x] Pad
+- [x] Gras-terrein als standaard ondergrond
+- [x] Entree (start bij ingang en verplaatsbaar naar padtoegang)
 
 ## Features
 
-- Plaatsen
-- Verwijderen
-- Geld aftrekken
-- Bouwpreview
+- [x] Plaatsen
+- [x] Verwijderen met bulldozer of rechtermuisknop
+- [x] Geld aftrekken volgens gebouwdefinitie
+- [x] Groene/rode bouwpreview
+- [x] Gebouwen draaien met R
+- [x] Gedeelde plaatsingsregels voor preview en bouwen
 
 ## Gereed wanneer
 
-- [ ] Pad plaatsen werkt
-- [ ] Gebouwen verwijderen werkt
-- [ ] Bouwkosten worden berekend
-- [ ] Ongeldige plaatsing wordt geblokkeerd
+- [x] Pad plaatsen werkt
+- [x] Gebouwen verwijderen werkt
+- [x] Bouwkosten worden berekend
+- [x] Ongeldige plaatsing wordt geblokkeerd
 
 ---
 
