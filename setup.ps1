@@ -33,6 +33,11 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if ($Build) {
+    $runningGame = Get-Process -Name "festival_grounds" -ErrorAction SilentlyContinue
+    if ($runningGame) {
+        Fail "Festival Grounds draait nog (PID $($runningGame[0].Id)). Sluit het spelvenster af en start daarna start.bat opnieuw; Windows vergrendelt het uitvoerbestand tijdens het draaien."
+    }
+
     Write-Host "Festival Grounds bouwen ($BuildType)..." -ForegroundColor Cyan
     & $cmake.Source --build $buildDir --config $BuildType
     if ($LASTEXITCODE -ne 0) { Fail "Build mislukt." }

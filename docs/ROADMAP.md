@@ -91,16 +91,16 @@ Eerste bezoekers simuleren.
 
 ## Features
 
-- Visitor entity
-- Visitor spawning
-- Willekeurig rondlopen
-- Basisanimatie
+- [x] Visitor entity
+- [x] Visitor spawning bij de ingang
+- [x] Willekeurig rondlopen over aangesloten paden
+- [x] Basis loopanimatie
 
 ## Gereed wanneer
 
-- [ ] Bezoekers verschijnen
-- [ ] Bezoekers bewegen
-- [ ] Entree wordt gebruikt
+- [x] Bezoekers verschijnen
+- [x] Bezoekers bewegen
+- [x] Entree wordt gebruikt als spawn- en vertrekpunt
 
 ---
 
@@ -112,16 +112,17 @@ Bezoekers moeten slimme routes kiezen.
 
 ## Features
 
-- Grid systeem
-- A* pathfinding
-- Route cache
-- Dynamische herberekening
+- [x] Grid systeem
+- [x] A* pathfinding met Manhattan-heuristiek
+- [x] Route cache met begrensde grootte
+- [x] Cache invalidatie en dynamische herberekening bij padwijzigingen
+- [x] Herstel als een bezoeker op een verwijderde tegel staat
 
 ## Gereed wanneer
 
-- [ ] Bezoekers volgen paden
-- [ ] Doelen worden bereikt
-- [ ] Vastlopen komt niet voor
+- [x] Bezoekers volgen paden
+- [x] Doelen worden bereikt
+- [x] Vastlopen komt niet voor; onbereikbare bezoekers worden herrouteerd of vertrekken
 
 ---
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "core/Types.hpp"
 #include "economy/Economy.hpp"
+#include "pathfinding/Pathfinder.hpp"
 #include "world/World.hpp"
 namespace fg {
 class Simulation {
@@ -14,6 +15,6 @@ public:
     bool paused{};
 private:
     void spawnVisitor(); void decide(Visitor& v); bool routeTo(Visitor& v,TilePos goal); void depart(std::size_t index);
-    World& world_; Economy& economy_; std::vector<Visitor> visitors_; DailyReport report_{}; DailyReport lastReport_{}; std::uint32_t nextId_{1}; float dayTime_{}; float spawnTimer_{};
+    World& world_; Economy& economy_; Pathfinder pathfinder_; std::vector<Visitor> visitors_; DailyReport report_{}; DailyReport lastReport_{}; std::uint32_t nextId_{1}; float dayTime_{}; float spawnTimer_{};
 };
 }

@@ -18,9 +18,11 @@ public:
     std::vector<TilePos> pathTiles() const;
     TilePos entrance() const { return entrance_; }
     TilePos entrancePath() const;
+    std::uint64_t navigationRevision() const { return navigationRevision_; }
 private:
     std::array<Tile, kMapWidth*kMapHeight> tiles_{};
     TilePos entrance_{kMapWidth/2, kMapHeight/2};
+    std::uint64_t navigationRevision_{};
     std::size_t index(TilePos p) const { return static_cast<std::size_t>(p.y*kMapWidth+p.x); }
 };
 }

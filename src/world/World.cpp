@@ -3,6 +3,7 @@
 namespace fg {
 World::World(std::uint32_t seed) { generate(seed); }
 void World::generate(std::uint32_t seed) {
+    ++navigationRevision_;
     entrance_={kMapWidth/2,kMapHeight/2};
     std::mt19937 random(seed);
     std::uniform_int_distribution<int> variation(0,15);
@@ -30,13 +31,13 @@ bool World::canPlace(BuildingType type,TilePos p) const {
 }
 bool World::place(BuildingType type,TilePos p,int rotation) {
     if(!canPlace(type,p))return false;
-    if(type==BuildingType::Path){at(p).path=true;return true;}
-    if(type==BuildingType::Entrance)at(entrance_).building=BuildingType::None;
+    if(type==BuildingType::Entrance){at(entrance_).building=BuildingType::None;++navigationRevision_;}
+    if(type==BuildingType::Path){at(p).path=true;++navigationRevision_;return true;}
     at(p).building=type;at(p).rotation=((rotation%4)+4)%4;
     if(type==BuildingType::Entrance)entrance_=p;
     return true;
 }
-void World::remove(TilePos p) { if(!inBounds(p)||p==entrance_)return; at(p).building=BuildingType::None; at(p).path=false; }
+void World::remove(TilePos p) { if(!inBounds(p)||p==entrance_)return;const bool wasPath=at(p).path;at(p).building=BuildingType::None;at(p).path=false;if(wasPath)++navigationRevision_; }
 std::vector<TilePos> World::buildings(BuildingType type) const { std::vector<TilePos> out; for(int y=0;y<kMapHeight;++y)for(int x=0;x<kMapWidth;++x)if(at({x,y}).building==type)out.push_back({x,y});return out; }
 std::vector<TilePos> World::pathTiles() const { std::vector<TilePos> out; for(int y=0;y<kMapHeight;++y)for(int x=0;x<kMapWidth;++x)if(at({x,y}).path)out.push_back({x,y});return out; }
 }

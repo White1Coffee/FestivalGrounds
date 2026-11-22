@@ -28,7 +28,7 @@ inline constexpr std::array<BuildingDef, 6> kBuildingDefs{{
 inline constexpr BuildingDef definition(BuildingType t) { return kBuildingDefs[static_cast<std::size_t>(t)]; }
 struct Tile { Terrain terrain{Terrain::Grass}; std::uint8_t variation{}; bool path{}; BuildingType building{BuildingType::None}; int rotation{}; };
 struct VisitorNeeds { float hunger{0.05f}; float thirst{0.05f}; float happiness{0.55f}; float energy{1.0f}; float patience{1.0f}; };
-struct Visitor { std::uint32_t id{}; Vec2 position{}; TilePos tile{}; TilePos target{}; VisitorNeeds needs{}; VisitorState state{VisitorState::Entering}; std::vector<TilePos> route; std::size_t routeIndex{}; float decisionTimer{}; float stayTimer{}; float moveProgress{}; float speed{2.2f}; };
+struct Visitor { std::uint32_t id{}; Vec2 position{}; TilePos tile{}; TilePos target{}; VisitorNeeds needs{}; VisitorState state{VisitorState::Entering}; std::vector<TilePos> route; std::size_t routeIndex{}; std::uint64_t routeRevision{}; float decisionTimer{}; float stayTimer{}; float moveProgress{}; float speed{2.2f}; };
 struct Building { BuildingType type{BuildingType::None}; TilePos tile{}; int rotation{}; };
 struct DailyReport { int day{1}; int admitted{}; int departed{}; int foodSales{}; int revenue{}; int expenses{}; float satisfactionTotal{}; int satisfactionCount{}; };
 }
