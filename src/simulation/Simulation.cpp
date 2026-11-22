@@ -7,7 +7,7 @@ namespace fg {
 namespace { std::mt19937 rng{std::random_device{}()}; float random(float a,float b){return std::uniform_real_distribution<float>(a,b)(rng);} }
 Simulation::Simulation(World&w,Economy&e):world_(w),economy_(e),pathfinder_(w){}
 bool Simulation::routeTo(Visitor&v,TilePos goal){auto r=pathfinder_.find(v.tile,goal);if(r.empty())return false;v.route=std::move(r);v.routeIndex=v.route.size()>1?1:0;v.target=goal;v.routeRevision=world_.navigationRevision();v.moveProgress=0.0f;return true;}
-void Simulation::spawnVisitor(){auto paths=world_.pathTiles();if(paths.empty())return;Visitor v;v.id=nextId_++;v.tile=world_.entrancePath();v.position={static_cast<float>(v.tile.x),static_cast<float>(v.tile.y)};v.stayTimer=random(70,145);v.speed=random(1.7f,2.5f);v.decisionTimer=random(0.1f,1.2f);visitors_.push_back(v);report_.admitted++;}
+void Simulation::spawnVisitor(){auto paths=world_.pathTiles();if(paths.empty())return;Visitor v;v.id=nextId_++;v.tile=world_.entrancePath();v.position={static_cast<float>(v.tile.x),static_cast<float>(v.tile.y)};v.stayTimer=random(180,260);v.speed=random(1.7f,2.5f);v.decisionTimer=random(0.1f,1.2f);visitors_.push_back(v);report_.admitted++;}
 void Simulation::decide(Visitor&v){
     auto food=world_.buildings(BuildingType::FoodStall),toilets=world_.buildings(BuildingType::Toilet),stages=world_.buildings(BuildingType::Stage);
     auto nearest=[&](const std::vector<TilePos>&items)->TilePos{TilePos best{};float bd=INFINITY;constexpr TilePos d[]={{1,0},{-1,0},{0,1},{0,-1}};for(auto facility:items)for(auto dir:d){TilePos p{facility.x+dir.x,facility.y+dir.y};if(!world_.inBounds(p)||!world_.at(p).path)continue;float score=static_cast<float>(std::abs(p.x-v.tile.x)+std::abs(p.y-v.tile.y));if(score<bd){bd=score;best=p;}}return best;};
@@ -25,7 +25,7 @@ void Simulation::update(float dt){if(paused)return;dayTime_+=dt;spawnTimer_+=dt;
     // One in-game day lasts about six real-time minutes; arrival rate rises through afternoon.
     const float arrival=dayTime_<100?1.4f:dayTime_<280?2.5f:0.8f;
     if(dayTime_<390&&spawnTimer_>=arrival){spawnTimer_=0;if(visitors_.size()<450)spawnVisitor();}
-    for(std::size_t i=0;i<visitors_.size();){auto&v=visitors_[i];v.needs.hunger=std::min(1.0f,v.needs.hunger+dt*.0017f);v.needs.thirst=std::min(1.0f,v.needs.thirst+dt*.0022f);v.needs.energy=std::max(0.0f,v.needs.energy-dt*.0010f);v.needs.patience=std::max(0.0f,v.needs.patience-dt*.0005f);v.stayTimer-=dt;
+    for(std::size_t i=0;i<visitors_.size();){auto&v=visitors_[i];v.needs.hunger=std::min(1.0f,v.needs.hunger+dt*.0035f);v.needs.thirst=std::min(1.0f,v.needs.thirst+dt*.0022f);v.needs.energy=std::max(0.0f,v.needs.energy-dt*.0010f);v.needs.patience=std::max(0.0f,v.needs.patience-dt*.0005f);v.stayTimer-=dt;
         if(v.routeRevision!=world_.navigationRevision()){
             const bool mustRoute=!v.route.empty()||v.state==VisitorState::Leaving||!world_.at(v.tile).path;
             v.routeRevision=world_.navigationRevision();

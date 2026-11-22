@@ -56,7 +56,7 @@ Je begint op een grasveld met een ingang en een kort pad. Verleng het pad en pla
 | `N` | Meteen naar de volgende festivaldag |
 | Escape | Spel afsluiten |
 
-Je begint met $2.500. Bezoekers komen binnen via de ingang, lopen over aangesloten paden, bezoeken podia, kopen eten, gebruiken toiletten en verlaten het terrein. Hun behoeften en bestemmingen verschillen per bezoeker. Een voedselverkoop levert $18 op; aan het einde van de dag wordt $2 per verkoop aan voorraadkosten afgetrokken. De HUD toont saldo, bezoekersaantal, dagfase en zoomniveau.
+Je begint met $2.500. Voor inkomsten bouw je een eetkraam naast een aangesloten pad; die kost $120. Bezoekers komen binnen via de ingang, lopen over aangesloten paden, bezoeken podia, kopen eten, gebruiken toiletten en verlaten het terrein. Hun behoeften en bestemmingen verschillen per bezoeker. Een voedselverkoop levert $18 op; aan het einde van de dag wordt $2 per verkoop aan voorraadkosten afgetrokken. De HUD toont saldo, bezoekersaantal, dagfase en zoomniveau.
 
 ## Technische opzet
 
