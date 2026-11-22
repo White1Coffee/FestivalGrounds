@@ -1,87 +1,75 @@
 # Festival Grounds
 
-A small, data-driven C++20 and SDL2 festival management sandbox. It uses a custom, lightweight entity/component-style model and a hand-drawn isometric renderer made from SDL geometry, so no external game engine or art assets are required. The game draws at a 640×400 logical resolution and scales with nearest-neighbor filtering for crisp pixel edges. Buildings and visitors use small, blocky pixel sprites drawn in code.
+Festival Grounds is een speelbare C++20- en SDL2-prototypegame over het bouwen en beheren van een muziekfestival. De kaart is isometrisch en 64×64 tegels groot. De huidige versie bevat bouwmodus, bezoekers, A*-routeplanning en een eenvoudige festival-economie.
 
-## Build and run
+De renderer gebruikt een canvas van 640×400 pixels en schaalt dat scherp op. Gebouwen en bezoekers worden met SDL2-vormen getekend; externe spritebestanden zijn niet nodig.
 
-Requirements: CMake 3.20+, a C++20 compiler, and an internet connection for the first configure if SDL2 is not already installed. CMake downloads and builds the official SDL2 2.32.8 source release as a static library when it cannot find an installed SDL2 package.
+## Benodigdheden
+
+- CMake 3.20 of nieuwer
+- Een C++20-compiler
+- Internettoegang tijdens de eerste configuratie als SDL2 niet al als CMake-package is geïnstalleerd
+
+Als SDL2 niet wordt gevonden, downloadt CMake de officiële SDL2 2.32.8-broncode en bouwt die statisch mee.
+
+## Bouwen en starten
+
+### Windows
+
+Installeer CMake en Visual Studio Build Tools met de workload **Desktop development with C++**. Dubbelklik daarna op `start.bat`; die configureert, bouwt en start de game. Vanuit PowerShell kun je `setup.ps1` gebruiken om alleen te configureren, of `setup.ps1 -Build` om te configureren en bouwen zonder de game te starten:
+
+```powershell
+.\setup.ps1
+.\setup.ps1 -Build
+```
+
+Sluit Festival Grounds voordat je opnieuw bouwt. Windows vergrendelt de `.exe` zolang de game draait; de setup geeft een melding als het proces nog actief is.
+
+### Handmatig bouwen
 
 ```sh
 cmake -S . -B build
 cmake --build build --config Release
-./build/festival_grounds
 ```
 
-On Windows, run `build\Release\festival_grounds.exe` for a multi-configuration generator.
+Start daarna `build/Release/festival_grounds.exe` met Visual Studio op Windows, `build/festival_grounds.exe` met een single-configuration generator, of `./build/festival_grounds` op Linux.
 
-### Windows scripts
+## Spelen
 
-1. Install CMake 3.20+ and Visual Studio Build Tools with the **Desktop development with C++** workload.
-2. Double-click `start.bat` to configure, download/build SDL2 if needed, build the game, and launch it. To only configure the project, run `setup.ps1` in PowerShell; run `setup.ps1 -Build` to build without launching.
+Je begint op een grasveld met een ingang en een kort pad. Verleng het pad en plaats voorzieningen ernaast. De ingang kun je verplaatsen naar een lege tegel naast een pad. De groene of rode tegelpreview laat zien of de gekozen plek geldig is.
 
-The scripts check for tools and report missing prerequisites. SDL2's source download requires internet access on the first configure.
+| Invoer | Actie |
+| --- | --- |
+| WASD of pijltjestoetsen | Camera verplaatsen |
+| Home | Kaart centreren |
+| Muiswiel, `+` of `-` | In- en uitzoomen |
+| `1` | Pad selecteren ($5 per tegel) |
+| `2` | Eetkraam selecteren ($120) |
+| `3` | Toilet selecteren ($80) |
+| `4` | Klein podium selecteren ($450) |
+| `5` | Ingang verplaatsen (gratis) |
+| Linkermuisknop | Geselecteerd object plaatsen of slopen |
+| `B` | Bulldozer selecteren |
+| Rechtermuisknop | Tegel slopen |
+| `R` | Geselecteerd gebouw draaien |
+| Spatie | Simulatie pauzeren of hervatten |
+| `N` | Meteen naar de volgende festivaldag |
+| Escape | Spel afsluiten |
 
-## Controls
+Je begint met $2.500. Bezoekers komen binnen via de ingang, lopen over aangesloten paden, bezoeken podia, kopen eten, gebruiken toiletten en verlaten het terrein. Hun behoeften en bestemmingen verschillen per bezoeker. Een voedselverkoop levert $18 op; aan het einde van de dag wordt $2 per verkoop aan voorraadkosten afgetrokken. De HUD toont saldo, bezoekersaantal, dagfase en zoomniveau.
 
-- **WASD / arrow keys:** scroll the camera; **Home:** recenter
-- **Mouse wheel / + / -:** zoom in and out
-- **1:** path, **2:** food stall, **3:** toilet, **4:** stage, **5:** entrance
-- **Left click:** place selected item; **B** or **right click:** remove item / path
-- **R:** rotate selected building; **Mouse wheel / + / -:** zoom; **Space:** pause; **N:** advance to next day
-- **Escape:** quit
+## Technische opzet
 
-Start on a generated 64×64 grass map with the entrance and short path already built. The default seed creates the same decorative grass variation each run. Connect new paths to the entrance, then place facilities beside paths. The entrance can be moved to another empty tile beside a path. Invalid spots show a red preview; valid spots show green. Rotate buildings with **R**, and remove buildings or paths with **B** or right click. Visitors arrive automatically, use A* over connected path tiles, visit stages, buy food, use toilets, and leave as their needs change. The HUD shows balance, visitors, day phase, zoom, and selected tool. A daily report appears in the upper-right.
+- `src/main.cpp` beheert de SDL2-applicatie, invoer, vaste simulatiestappen en rendering.
+- `src/core/` bevat gedeelde types, een eventbus, logging en een BMP-texturemanager.
+- `src/world/` beheert de 64×64-tegelkaart, gebouwplaatsing en de navigatieversie.
+- `src/pathfinding/` bevat A* en een begrensde routecache. Padwijzigingen maken de cache ongeldig; bezoekers plannen actieve routes dan opnieuw.
+- `src/simulation/` beheert bezoekers, behoeften, aankomst, gedrag en beweging.
+- `src/economy/` beheert bouwkosten, voedselinkomsten en dagtotalen.
+- `src/rendering/` tekent de isometrische kaart, bezoekers, gebouwen en HUD met SDL2.
+- `src/ui/` verwerkt toetsenbord- en muisinvoer.
+- `docs/ROADMAP.md` beschrijft de ontwikkelfases.
 
-## Architecture
+De kaarttegels bevatten terrein, padstatus en een gebouwtype. Bezoekers worden als compacte waarden in de simulatie bewaard. De simulatie draait op vaste stappen van 1/30 seconde; de renderer vraagt schermsynchronisatie aan om de beelden gelijkmatig te presenteren.
 
-```mermaid
-classDiagram
-    class Game { SDL loop; fixed-step simulation; }
-    class World { Tile grid; building registry; }
-    class Tile { Terrain terrain; optional building; bool path; }
-    class Building { BuildingType; footprint; price; }
-    class Visitor { Position; VisitorNeeds; VisitorState; route; }
-    class Simulation { spawn; decisions; movement; needs; }
-    class Pathfinder { A*; path connectivity; }
-    class Economy { balance; transactions; daily report; }
-    class Renderer { isometric projection; world; HUD; }
-    class Input { camera; build/remove; tool selection; }
-    Game --> World
-    Game --> Simulation
-    Game --> Renderer
-    Game --> Input
-    Simulation --> Pathfinder
-    Simulation --> Economy
-    Simulation --> World
-    Renderer --> World
-```
-
-### Folder structure
-
-```text
-src/
-  core/            # Shared types, constants, game orchestration (main.cpp currently owns loop)
-  world/           # Tile grid and building placement
-  entities/        # Visitor/building value types (kept header-only in core/Types.hpp)
-  pathfinding/     # Grid A*
-  simulation/      # Visitor needs, decisions, arrivals and day phases
-  economy/         # Costs, transactions and daily summaries
-  rendering/       # SDL isometric drawing and HUD
-  ui/              # Mouse/keyboard commands and camera
-data/              # Optional future building/visitor tuning data
-assets/            # Optional future sprites/audio; current prototype is asset-free
-```
-
-### Runtime design
-
-The SDL event loop handles input and rendering; simulation advances at a fixed 1/30-second step with an accumulator, independent of render cadence. Rendering is capped near 60 FPS. This gives deterministic-ish simulation steps and avoids tying visitor speed to display refresh. Hundreds of visitors use compact value records; A* is recalculated when a visitor gets a new target or the route is exhausted. Tile occupancy and building registries are the source of truth. Congestion can later be added as a movement cost in `Pathfinder` without changing visitor intent logic.
-
-### Rendering and simulation notes
-
-World coordinates project to screen using `sx=(x-y)*tileWidth/2`, `sy=(x+y)*tileHeight/2`; inverse projection maps clicks to tiles. Tiles and buildings are drawn in diagonal painter order. Camera offset supports keyboard scrolling. SDL geometry and small blocky code-drawn sprites use a 640×400 logical canvas, nearest-neighbor scaled to the window for a pixelated look.
-
-Each visitor owns hunger, thirst, happiness, energy, and patience. A small state machine (`Entering`, `Wandering`, `GoingToStage`, `GoingToFood`, `GoingToToilet`, `Leaving`) scores nearby facilities against need thresholds, requests a connected A* route, and follows it tile by tile. Routes are cached by start and goal and invalidated by the world's navigation revision when paths or the entrance change. Visitors whose routes become unreachable try another destination; those unable to reach the exit leave the simulation rather than remaining stuck forever. Need decay, service outcomes, stage enjoyment, and exit satisfaction are independent per visitor. There are no authored visitor routes.
-
-Placement checks map bounds, occupancy, affordability, and path adjacency for facilities. A preview is green when valid and red when invalid. Buildings are single-tile in this milestone; the footprint field is retained for future larger structures. Money changes only through the economy service, which also tracks daily revenue and expenses.
-
-Future weather, staff, utility networks, artists, campaigns and multi-day events can be added as simulation systems consuming the same world, visitor, and economy interfaces. Building and visitor definitions are deliberately simple value data today; `data/` is reserved for JSON tuning and scenario files.
+De code bevat momenteel geen opgeslagen scenario's, JSON-contentbestanden, echte afbeeldingssprites of save/load-systeem. De texturemanager is aanwezig voor toekomstige BMP-assets; de huidige beelden worden volledig met code getekend.
