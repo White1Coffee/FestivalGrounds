@@ -1,0 +1,2 @@
+#include "economy/Economy.hpp"
+namespace fg { bool Economy::spend(int n){if(n<0||balance_<n)return false;balance_-=n;return true;} void Economy::earn(int n){if(n>0)balance_+=n;} void Economy::sellFood(DailyReport&r){constexpr int price=18;earn(price);r.foodSales++;r.revenue+=price;} int Economy::closeDay(DailyReport&r){const int upkeep=static_cast<int>(r.foodSales*2);balance_-=upkeep;r.expenses+=upkeep;const int net=r.revenue-r.expenses;r=DailyReport{r.day+1};return net;} }
